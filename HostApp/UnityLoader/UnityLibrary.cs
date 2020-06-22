@@ -25,54 +25,40 @@ namespace UnityLoader
         private const int WA_INACTIVE = 0;
         private const int WA_ACTIVE = 1;
 
-        private Process _process = null;
-        private IntPtr _unityHwnd = IntPtr.Zero;
-
-        public UnityLibrary(string unityExePath, IntPtr windowHandle)
+        protected void UpdateUnityHwnd(IntPtr windowHandle)
         {
-            var startInfo = new ProcessStartInfo()
-            {
-                FileName = unityExePath,
-                Arguments = string.Format("-ParentHWND {0}", Environment.Is64BitProcess ? windowHandle.ToInt64() : windowHandle.ToInt32()),
-                UseShellExecute = true,
-                CreateNoWindow = true,
-            };
-
-            _process = Process.Start(startInfo);
-            _process.WaitForInputIdle();
-
             EnumChildWindows(windowHandle, (hwnd, lparam) =>
             {
-                _unityHwnd = hwnd;
+                UnityHwnd = hwnd;
                 ActivateUnityWindow();
                 return false;
             }, IntPtr.Zero);
         }
 
+        public IntPtr UnityHwnd { get; private set; } = IntPtr.Zero;
+
+
         public void ActivateUnityWindow()
         {
-            SendMessage(_unityHwnd, WM_ACTIVATE, WA_ACTIVE, IntPtr.Zero);
+            SendMessage(UnityHwnd, WM_ACTIVATE, WA_ACTIVE, IntPtr.Zero);
         }
 
         public void DeactivateUnityWindow()
         {
-            SendMessage(_unityHwnd, WM_ACTIVATE, WA_INACTIVE, IntPtr.Zero);
+            SendMessage(UnityHwnd, WM_ACTIVATE, WA_INACTIVE, IntPtr.Zero);
         }
 
         public void ResizeUnityWindow(int width, int height)
         {
-            MoveWindow(_unityHwnd, 0, 0, width, height, true);
+            MoveWindow(UnityHwnd, 0, 0, width, height, true);
             ActivateUnityWindow();
         }
 
-        public void CloseUnityWindow()
+        public virtual void CloseUnityWindow()
         {
-            CloseWindow(_unityHwnd);
-            Thread.Sleep(1000);
-            if (!_process.HasExited)
-            {
-                _process.Kill();
-            }
+            CloseWindow(UnityHwnd);
         }
+
+        protected string CreateArgument(IntPtr windowHandle) => string.Format("-ParentHWND {0}", Environment.Is64BitProcess ? windowHandle.ToInt64() : windowHandle.ToInt32());
     }
 }

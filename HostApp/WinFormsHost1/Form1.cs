@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UnityLibrary.Server.Hubs;
 using UnityLoader;
 
 namespace WinFormsHost1
@@ -14,6 +15,7 @@ namespace WinFormsHost1
     public partial class Form1 : Form
     {
         private UnityProcess _unityProcess = null;
+        private AnimeType _animeType = AnimeType.Standing;
 
         public Form1()
         {
@@ -44,6 +46,21 @@ namespace WinFormsHost1
         {
             base.OnDeactivate(e);
             _unityProcess?.DeactivateUnityWindow();
+        }
+
+        private void BtnAnimation_OnClick(object sender, EventArgs e)
+        {
+            _animeType++;
+            if (_animeType > AnimeType.Running)
+            {
+                _animeType = AnimeType.Standing;
+            }
+            UnityChanController.Current?.SetAnimation(_animeType);
+        }
+
+        private void TextBox_OnTextChanged(object sender, EventArgs e)
+        {
+            UnityChanController.Current?.SetMessageText(_textBox.Text);
         }
     }
 }

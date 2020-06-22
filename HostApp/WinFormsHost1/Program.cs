@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Grpc.Core;
+using MagicOnion.Server;
 
 namespace WinFormsHost1
 {
@@ -17,6 +16,15 @@ namespace WinFormsHost1
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            var service = MagicOnionEngine.BuildServerServiceDefinition(isReturnExceptionStackTraceInErrorDetail: true);
+            var server = new Server
+            {
+                Services = { service },
+                Ports = { new ServerPort("localhost", 12345, ServerCredentials.Insecure) }
+            };
+            server.Start();
+
             Application.Run(new Form1());
         }
     }

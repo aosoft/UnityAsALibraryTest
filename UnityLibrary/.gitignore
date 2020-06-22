@@ -1,6 +1,15 @@
 Assets/UnityChan/*
 Assets/UnityChan.meta
 Assets/README_SD_UnityChan.*
+Assets/Scripts/MagicOnion
+Assets/Scripts/MagicOnion.Abstractions
+Assets/Scripts/MagicOnion.Unity
+Assets/Scripts/MessagePack
+Assets/Scripts/MagicOnion.Abstractions.meta
+Assets/Scripts/MagicOnion.meta
+Assets/Scripts/MagicOnion.Unity.meta
+Assets/Scripts/MessagePack.meta
+Assets/Plugins/
 
 [Ll]ibrary/
 [Tt]emp/

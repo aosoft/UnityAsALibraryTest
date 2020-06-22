@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityLoader\UnityLoader.csproj" />
+    <PackageReference Include="MagicOnion" Version="3.0.13" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UnityLoader\UnityLoader.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\UnityLibrary\Assets\Scripts\ServerShared\**\*.cs" LinkBase="LinkFromUnity" />
+  </ItemGroup>
 </Project>

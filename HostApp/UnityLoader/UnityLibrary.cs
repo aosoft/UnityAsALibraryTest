@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace UnityLoader
 {
-    public class UnityProcess
+    public class UnityLibrary
     {
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
@@ -28,7 +28,7 @@ namespace UnityLoader
         private Process _process = null;
         private IntPtr _unityHwnd = IntPtr.Zero;
 
-        public UnityProcess(string unityExePath, IntPtr windowHandle)
+        public UnityLibrary(string unityExePath, IntPtr windowHandle)
         {
             var startInfo = new ProcessStartInfo()
             {

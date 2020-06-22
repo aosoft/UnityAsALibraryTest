@@ -14,7 +14,7 @@ namespace WinFormsHost1
 {
     public partial class Form1 : Form
     {
-        private UnityProcess _unityProcess = null;
+        private UnityLoader.UnityLibrary _unityProcess = null;
         private AnimeType _animeType = AnimeType.Standing;
 
         public Form1()
@@ -25,7 +25,7 @@ namespace WinFormsHost1
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            _unityProcess = new UnityProcess(@"D:\Git\UnityAsALibraryTest\UnityLibrary\Build\Release\UnityLibrary.exe", _splitContainer.Panel2.Handle);
+            _unityProcess = new UnityLoader.UnityLibrary(@"UnityLibrary\UnityLibrary.exe", _splitContainer.Panel2.Handle);
 
             _splitContainer.Panel2.SizeChanged += (s, e) => _unityProcess?.ResizeUnityWindow(_splitContainer.Panel2.Width, _splitContainer.Panel2.Height);
         }

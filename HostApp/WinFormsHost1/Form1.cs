@@ -8,7 +8,7 @@ namespace WinFormsHost1
 {
     public partial class Form1 : Form
     {
-        private UnityProcess _unityProcess = null;
+        private UnityLoader.UnityLibrary _unityLibrary = null;
         private AnimeType _animeType = AnimeType.Standing;
 
         public Form1()
@@ -19,27 +19,35 @@ namespace WinFormsHost1
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            _unityProcess = new UnityProcess(@"UnityLibrary\UnityLibrary.exe", _splitContainer.Panel2.Handle);
+            _unityLibrary = new UnityProcess(@"UnityLibrary\UnityLibrary.exe", _splitContainer.Panel2.Handle);
+            //_unityLibrary = new UnityDLL(@"UnityPlayer.dll", _splitContainer.Panel2.Handle);
 
-            _splitContainer.Panel2.SizeChanged += (s, e) => _unityProcess?.ResizeUnityWindow(_splitContainer.Panel2.Width, _splitContainer.Panel2.Height);
+            _splitContainer.Panel2.SizeChanged += (s, e) => _unityLibrary?.ResizeUnityWindow(_splitContainer.Panel2.Width, _splitContainer.Panel2.Height);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            _unityProcess?.CloseUnityWindow();
+            _unityLibrary?.CloseUnityWindow();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            (_unityLibrary as IDisposable)?.Dispose();
+            _unityLibrary = null;
         }
 
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            _unityProcess?.ActivateUnityWindow();
+            _unityLibrary?.ActivateUnityWindow();
         }
 
         protected override void OnDeactivate(EventArgs e)
         {
             base.OnDeactivate(e);
-            _unityProcess?.DeactivateUnityWindow();
+            _unityLibrary?.DeactivateUnityWindow();
         }
 
         private void BtnAnimation_OnClick(object sender, EventArgs e)

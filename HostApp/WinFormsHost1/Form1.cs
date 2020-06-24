@@ -1,24 +1,32 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Grpc.Core;
+using MagicOnion.Client;
 using UnityLibrary.Server.Hubs;
 using UnityLoader;
 
 namespace WinFormsHost1
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, IUnityChanControllerReceiver
     {
         private UnityLoader.UnityLibrary _unityLibrary = null;
         private AnimeType _animeType = AnimeType.Standing;
 
+        private Channel _channel = null;
+        private IUnityChanController _controller = null;
+
         public Form1()
         {
             InitializeComponent();
+            _channel = new Channel("localhost:12345", ChannelCredentials.Insecure);
+            _controller = StreamingHubClient.Connect<IUnityChanController, IUnityChanControllerReceiver>(this._channel, this);
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override async void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            await _controller?.RegisterAsync();
             _unityLibrary = new UnityProcess(@"UnityLibrary\UnityLibrary.exe", _splitContainer.Panel2.Handle);
             //_unityLibrary = new UnityDLL(@"UnityPlayer.dll", _splitContainer.Panel2.Handle);
 
@@ -31,11 +39,15 @@ namespace WinFormsHost1
             _unityLibrary?.CloseUnityWindow();
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override async void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             (_unityLibrary as IDisposable)?.Dispose();
             _unityLibrary = null;
+            await _controller?.UnregisterAsync();
+            await _controller?.DisposeAsync();
+            _controller = null;
+            await _channel?.ShutdownAsync();
         }
 
         protected override void OnActivated(EventArgs e)
@@ -57,12 +69,20 @@ namespace WinFormsHost1
             {
                 _animeType = AnimeType.Standing;
             }
-            UnityChanController.Current?.SetAnimation(_animeType);
+            _controller?.SetAnimationAsync(_animeType);
         }
 
         private void TextBox_OnTextChanged(object sender, EventArgs e)
         {
-            UnityChanController.Current?.SetMessageText(_textBox.Text);
+            _controller?.SetMessageTextAsync(_textBox.Text);
+        }
+
+        void IUnityChanControllerReceiver.OnSetAnimation(AnimeType animeType)
+        {
+        }
+
+        void IUnityChanControllerReceiver.OnSetMessageText(string msg)
+        {
         }
     }
 }

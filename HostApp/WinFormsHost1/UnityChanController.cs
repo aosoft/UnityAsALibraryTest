@@ -11,28 +11,26 @@ namespace WinFormsHost1
     {
         private IGroup _group;
 
-        public void SetAnimation(AnimeType animeType)
-        {
-            Broadcast(_group).SetAnimation(animeType);
-        }
-
-        public void SetMessageText(string msg)
-        {
-            Broadcast(_group).SetMessageText(msg);
-        }
-
-        async Task IUnityChanController.Register()
+        async Task IUnityChanController.RegisterAsync()
         {
             _group = await Group.AddAsync("UnityLibrary");
-            Current = this;
         }
 
-        Task IUnityChanController.Unregister()
+        Task IUnityChanController.UnregisterAsync()
         {
-            Current = null;
             return _group?.RemoveAsync(Context).AsTask();
         }
 
-        public static UnityChanController Current { get; private set; }
+        Task IUnityChanController.SetAnimationAsync(AnimeType animeType)
+        {
+            Broadcast(_group).OnSetAnimation(animeType);
+            return Task.CompletedTask;
+        }
+
+        Task IUnityChanController.SetMessageTextAsync(string msg)
+        {
+            Broadcast(_group).OnSetMessageText(msg);
+            return Task.CompletedTask;
+        }
     }
 }

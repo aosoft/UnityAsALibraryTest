@@ -5,7 +5,10 @@ namespace UnityLibrary.Server.Hubs
 {
     public interface IUnityChanController : IStreamingHub<IUnityChanController, IUnityChanControllerReceiver>
     {
-        Task Register();
-        Task Unregister();
+        Task RegisterAsync();
+        Task UnregisterAsync();
+
+        Task SetAnimationAsync(AnimeType animeType);
+        Task SetMessageTextAsync(string msg);
     }
 }

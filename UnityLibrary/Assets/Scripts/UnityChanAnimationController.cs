@@ -24,15 +24,14 @@ public class UnityChanAnimationController : MonoBehaviour, IUnityChanControllerR
         _channel = new Channel("localhost:12345", ChannelCredentials.Insecure);
         _controller = StreamingHubClient.Connect<IUnityChanController, IUnityChanControllerReceiver>(this._channel, this);
     }
-
     private async void Start()
     {
-        await _controller?.Register();
+        await _controller?.RegisterAsync();
     }
 
     private async void OnDestroy()
     {
-        await _controller?.Unregister();
+        await _controller?.UnregisterAsync();
         await _controller?.DisposeAsync();
         _controller = null;
         await _channel?.ShutdownAsync();
@@ -45,16 +44,16 @@ public class UnityChanAnimationController : MonoBehaviour, IUnityChanControllerR
         GUI.Box(new Rect(Screen.width - 110, 10, 100, 90), "Change Motion");
         if (GUI.Button(new Rect(Screen.width - 100, 40, 80, 20), "Standing"))
         {
-            (this as IUnityChanControllerReceiver).SetAnimation(AnimeType.Standing);
+            (this as IUnityChanControllerReceiver).OnSetAnimation(AnimeType.Standing);
         }
         if (GUI.Button(new Rect(Screen.width - 100, 70, 80, 20), "Walking"))
         {
-            (this as IUnityChanControllerReceiver).SetAnimation(AnimeType.Walking);
+            (this as IUnityChanControllerReceiver).OnSetAnimation(AnimeType.Walking);
         }
     }
 #endif
 
-    void IUnityChanControllerReceiver.SetAnimation(AnimeType animeType)
+    void IUnityChanControllerReceiver.OnSetAnimation(AnimeType animeType)
     {
         switch (animeType)
         {
@@ -65,7 +64,7 @@ public class UnityChanAnimationController : MonoBehaviour, IUnityChanControllerR
         }
     }
 
-    void IUnityChanControllerReceiver.SetMessageText(string msg)
+    void IUnityChanControllerReceiver.OnSetMessageText(string msg)
     {
         if (string.IsNullOrEmpty(msg))
         {

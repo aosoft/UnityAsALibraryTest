@@ -11,7 +11,7 @@
 
     public interface IUnityChanControllerReceiver
     {
-        void SetAnimation(AnimeType animeType);
-        void SetMessageText(string msg);
+        void OnSetAnimation(AnimeType animeType);
+        void OnSetMessageText(string msg);
     }
 }
